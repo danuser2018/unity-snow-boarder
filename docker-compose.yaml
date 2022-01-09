@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  webgl:
+    container_name: unity-webgl-demo
+    image: unity-webgl-demo
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
