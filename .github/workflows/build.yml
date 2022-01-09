@@ -1,0 +1,86 @@
+name: Build & Deploy
+
+on:
+  workflow_dispatch:    
+
+env:
+  UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+  UNITY_VERSION: 2021.2.5f1
+  PROJECT_PATH: .
+  TARGET_PLATFORM: WebGL
+
+jobs:
+  checklicense:
+    name: check if UNITY_LICENSE is set in github secrets
+    runs-on: ubuntu-latest
+    outputs:
+      is_unity_license_set: ${{ steps.checklicense_job.outputs.is_unity_license_set }}
+    steps:
+      - name: Check whether unity activation requests should be done
+        id: checklicense_job
+        run: |
+            echo "Skip activation job: ${{ env.UNITY_LICENSE != '' }}"
+            echo "::set-output name=is_unity_license_set::${{ env.UNITY_LICENSE != '' }}"
+
+  build:
+    needs: [checklicense]
+    if: needs.checklicense.outputs.is_unity_license_set == 'true'
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      - uses: actions/cache@v1.1.0
+        with:
+          path: ${{ env.PROJECT_PATH }}/Library
+          key: Library-${{ env.PROJECT_PATH }}-${{ env.TARGET_PLATFORM }}
+          restore-keys: |
+            Library-${{env.PROJECT_PATH}}-
+            Library-
+      - uses: game-ci/unity-builder@v2.0-alpha-13
+        with:
+          projectPath: ${{ env.PROJECT_PATH }}
+          unityVersion: ${{ env.UNITY_VERSION }}
+          targetPlatform: ${{ env.TARGET_PLATFORM }}
+
+      - uses: actions/upload-artifact@v1
+        with:
+          name: Build-${{ env.TARGET_PLATFORM }}
+          path: build/${{ env.TARGET_PLATFORM }}/${{ env.TARGET_PLATFORM }}
+          
+  deploy:
+    needs: [build]
+    name: Deploy to Heroku
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v2
+        with:
+          lfs: true
+
+      - uses: actions/cache@v1.1.0
+        with:
+          path: ${{ env.PROJECT_PATH }}/Library
+          key: Library-${{ env.PROJECT_PATH }}-${{ env.TARGET_PLATFORM }}
+          restore-keys: |
+            Library-${{ env.PROJECT_PATH }}-
+            Library-
+
+      - name: Download previosly built artifact
+        id: download
+        uses: actions/download-artifact@v2
+        with:
+          name: Build-${{ env.TARGET_PLATFORM }}
+          path: build
+
+      - name: Build image, push and deploy to Heroku
+        id: heroku
+        uses: jctaveras/heroku-deploy@v2.1.3
+        with:
+          email: ${{ secrets.HEROKU_EMAIL }}
+          api_key: ${{ secrets.HEROKU_API_KEY }} 
+          app_name: ${{ secrets.HEROKU_APP_NAME }} 
+          dockerfile_path: ${{ env.PROJECT_PATH }}
