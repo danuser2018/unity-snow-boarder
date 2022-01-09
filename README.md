@@ -1,3 +1,5 @@
+[![Build & Deploy](https://github.com/danuser2018/unity-snow-boarder/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/danuser2018/unity-snow-boarder/actions/workflows/build.yml)
+
 # Snow Boarder
 
 Proyecto creado para el curso de Unity 2D de Udemy.
