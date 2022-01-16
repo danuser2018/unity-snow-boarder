@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using Zenject;
 
 public class InputManager
 {
@@ -8,10 +6,11 @@ public class InputManager
     private CommandHandler rightHandler;
 
     // Start is called before the first frame update
-    public InputManager()
+    [Inject]
+    public InputManager(LeftCommandHandler leftHandler, RightCommandHandler rightHandler)
     {
-        leftHandler = new LeftCommandHandler();
-        rightHandler = new RightCommandHandler();
+        this.leftHandler = leftHandler;
+        this.rightHandler = rightHandler;
     }
 
     public void Process(Command command) {

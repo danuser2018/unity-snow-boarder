@@ -1,16 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] float torqueAmount;
-    InputManager inputManager;
-
-    void Start()
-    {
-        inputManager = new InputManager();
-    }
+    [Inject] InputManager inputManager;
 
     void Update()
     {
