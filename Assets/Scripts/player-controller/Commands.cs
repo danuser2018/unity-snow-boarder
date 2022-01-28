@@ -1,21 +1,24 @@
 using UnityEngine;
 
-public abstract class Command {
-    public readonly GameObject gameObject;
-    public readonly float torqueAmount;
-
-    protected Command(GameObject gameObject, float torqueAmount) {
-        this.gameObject = gameObject;
-        this.torqueAmount = torqueAmount;
+public class Command 
+{
+    public virtual void Execute(Rigidbody2D rigidBody, float torqueAmount) 
+    {
     }
 }
 
-public class LeftCommand : Command {
-    public LeftCommand(GameObject gameObject, float torqueAmount) 
-        : base(gameObject, torqueAmount) {}
+public class LeftCommand : Command
+{
+    public override void Execute(Rigidbody2D rigidBody, float torqueAmount)
+    {
+        rigidBody.AddTorque(torqueAmount);
+    }
 }
 
+
 public class RightCommand : Command {
-    public RightCommand(GameObject gameObject, float torqueAmount) 
-        : base(gameObject, torqueAmount) {}
+    public override void Execute(Rigidbody2D rigidBody, float torqueAmount)
+    {
+        rigidBody.AddTorque(-torqueAmount);
+    }
 }
