@@ -3,26 +3,18 @@ using Zenject;
 
 public class InputHandler
 {
+    [Inject (Id = "left")]
     private readonly Command commandLeft;
+    [Inject (Id = "right")]
     private readonly Command commandRight;
+    [Inject (Id = "default")]
     private readonly Command defaultCommand;
-
-    [Inject]
-    public InputHandler(Command commandLeft, Command commandRight, Command defaultCommand)
-    {
-        this.commandLeft = commandLeft;
-        this.commandRight = commandRight;
-        this.defaultCommand = defaultCommand;
-    }
 
     public Command GetCommand()
     {
-        Command command;
-        if (IsLeft()) command = commandLeft;
-        else if (IsRight()) command = commandRight;
-        else command = defaultCommand;
-
-        return command;
+        if (IsLeft()) return commandLeft;
+        else if (IsRight()) return commandRight;
+        else return defaultCommand;
     }
 
     private bool IsLeft()
@@ -35,3 +27,5 @@ public class InputHandler
         return Input.GetKey(KeyCode.RightArrow);
     }
 }
+
+interface 

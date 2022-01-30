@@ -5,12 +5,10 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "SnowBoarder",
-        "Zenject-TestFramework",
-        "Zenject"
+        "Unity.InputSystem",
+        "Unity.InputSystem.TestFramework"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
